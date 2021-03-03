@@ -15,9 +15,9 @@ export const Match: React.FunctionComponent<MatchProps> = React.forwardRef(
   ({rates, date, league, team1, team2}, ref): JSX.Element => {
     const scrollX = new Animated.Value(0);
 
-    const _renderItem = (item: {name: string; rate: string}) => {
+    const _renderItem = (item: {name: string; rate: string}, index:number) => {
       return (
-        <View style={_style.itemContainer}>
+        <View key={index} style={_style.itemContainer}>
           <Text style={{fontWeight: '100', fontSize: normalize(8)}}>
             {item.name}
           </Text>
@@ -44,11 +44,10 @@ export const Match: React.FunctionComponent<MatchProps> = React.forwardRef(
             </View>
             <FlatList
               ref={ref}
-              keyExtractor={(item) => item.name}
+              keyExtractor={(item,index) => index.toString()}
               data={rates}
-              horizontal
-              pagingEnabled
-              scrollEnabled={false}
+              horizontal={true}
+              scrollEnabled={true}
               snapToAlignment="center"
               scrollEventThrottle={2}
               decelerationRate={'fast'}
@@ -57,7 +56,7 @@ export const Match: React.FunctionComponent<MatchProps> = React.forwardRef(
                 [{nativeEvent: {contentOffset: {x: scrollX}}}],
                 {useNativeDriver: false},
               )}
-              renderItem={({item}) => _renderItem(item)}
+              renderItem={({item,index}) => _renderItem(item,index)}
             />
             <View style={_style.moreContainer}>
               <Text style={{color: 'white'}}>+69</Text>
