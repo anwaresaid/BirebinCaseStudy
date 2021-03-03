@@ -1,14 +1,16 @@
 import React, {useMemo, useState} from 'react';
 import {SafeAreaView, ScrollView,Button,StyleSheet,View} from 'react-native';
+
+
 import {Match} from '../components/Match';
 import GestureRecognizer from 'react-native-swipe-gestures';
 import {deviceWidth, normalize} from '../Plugins/Device';
 import {MockData} from '../Utils/MockData';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import style from '../components/Match/style';
+
 
 const MainScreen: React.FunctionComponent = (): JSX.Element => {
   const [pageNumber, setPageNumber] = useState(1);
+  const [D, SetD] = useState(0);
   const [pageNumbersc,setPageNumbersc] = useState(1);
   const [temp1,setMockdata] = useState(MockData.slice(0,10));
   let modData = MockData.length%10;
@@ -50,22 +52,22 @@ const MainScreen: React.FunctionComponent = (): JSX.Element => {
    if(pageNumbersc==1){
       setMockdata( MockData.slice((pageNumbersc*10)-10, pageNumbersc*10));
    }
-    if (pageNumber > 0) {
-      setPageNumber((prevState) => prevState - 2);
-    }
+   
   }
-  const _onSwipeLeft = () => {
+  const _onSwipeLeft = (gestureState:{dx : number }) => {
+    console.log(gestureState);
     if (pageNumber < temp1[0].rates.length / 4) {
-      setPageNumber((prevState) => prevState + 1);
+        setPageNumber((prevState) => prevState + 1);
     }
     setTimeout(() => {
       inputRefs.forEach((value) => {
         value.current.scrollToOffset({
-          offset: pageNumber * (deviceWidth() - normalize(40)),
+          offset:D+Math.abs(gestureState.dx), //pageNumber * (deviceWidth() - normalize(40)),
           animated: true,
         });
       });
-    }, 50);
+      SetD((prevstate) => prevstate+Math.abs(gestureState.dx));
+    }, 500);
   };
 
   const _onSwipeRight = () => {
@@ -83,23 +85,29 @@ const MainScreen: React.FunctionComponent = (): JSX.Element => {
   };
 
   return (
-    <GestureRecognizer
-      style={{flex: 1}}
-      onSwipeLeft={_onSwipeLeft}
-      onSwipeRight={_onSwipeRight}>
+    
       <ScrollView>
         <SafeAreaView>
           {temp1.map((value, index) => {
             return (
+            
+              // <GestureRecognizer
+              //   key={index}
+              //   style={{flex: 1}}
+              //   onSwipeLeft={_onSwipeLeft}
+              //   onSwipeRight={_onSwipeRight}>
               <Match
+                key={index}
                 ref={inputRefs[index]}
                 league={value.league}
                 date={value.date}
                 team1={value.team1}
                 team2={value.team2}
                 rates={value.rates}
-                key={index}
+              
               />
+            // </GestureRecognizer>
+              
             );
           })}
          
@@ -113,7 +121,7 @@ const MainScreen: React.FunctionComponent = (): JSX.Element => {
           </View>
         </SafeAreaView>
       </ScrollView>
-    </GestureRecognizer>
+    
   );
 
  
