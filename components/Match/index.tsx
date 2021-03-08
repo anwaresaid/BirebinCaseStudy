@@ -47,7 +47,7 @@ export const Match: React.FunctionComponent<MatchProps> = React.forwardRef(
               keyExtractor={(item,index) => index.toString()}
               data={rates}
               horizontal={true}
-              scrollEnabled={true}
+              scrollEnabled={false}
               snapToAlignment="center"
               scrollEventThrottle={2}
               decelerationRate={'fast'}

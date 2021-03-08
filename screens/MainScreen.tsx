@@ -54,20 +54,18 @@ const MainScreen: React.FunctionComponent = (): JSX.Element => {
    }
    
   }
-  const _onSwipeLeft = (gestureState:{dx : number }) => {
-    console.log(gestureState);
-    if (pageNumber < temp1[0].rates.length / 4) {
-        setPageNumber((prevState) => prevState + 1);
+  const _onSwipeLeft = () => {
+    if (pageNumber < MockData[0].rates.length / 4) {
+      setPageNumber((prevState) => prevState + 1);
     }
     setTimeout(() => {
       inputRefs.forEach((value) => {
         value.current.scrollToOffset({
-          offset:D+Math.abs(gestureState.dx), //pageNumber * (deviceWidth() - normalize(40)),
+          offset: pageNumber * (deviceWidth() - normalize(60)),
           animated: true,
         });
       });
-      SetD((prevstate) => prevstate+Math.abs(gestureState.dx));
-    }, 500);
+    }, 0);
   };
 
   const _onSwipeRight = () => {
@@ -77,11 +75,11 @@ const MainScreen: React.FunctionComponent = (): JSX.Element => {
     setTimeout(() => {
       inputRefs.forEach((value) => {
         value.current.scrollToOffset({
-          offset: -pageNumber * (deviceWidth() + normalize(40)),
+          offset: -pageNumber * (deviceWidth() + normalize(60)),
           animated: true,
         });
       });
-    }, 500);
+    }, 0);
   };
 
   return (
@@ -91,13 +89,18 @@ const MainScreen: React.FunctionComponent = (): JSX.Element => {
           {temp1.map((value, index) => {
             return (
             
-              // <GestureRecognizer
-              //   key={index}
-              //   style={{flex: 1}}
-              //   onSwipeLeft={_onSwipeLeft}
-              //   onSwipeRight={_onSwipeRight}>
-              <Match
+              <GestureRecognizer
                 key={index}
+                style={{flex: 1}}
+                onSwipeLeft={_onSwipeLeft}
+                onSwipeRight={_onSwipeRight}
+                config={{
+                  velocityThreshold: 0,
+                  directionalOffsetThreshold: 1000,
+                }}
+                >
+              <Match
+
                 ref={inputRefs[index]}
                 league={value.league}
                 date={value.date}
@@ -106,7 +109,7 @@ const MainScreen: React.FunctionComponent = (): JSX.Element => {
                 rates={value.rates}
               
               />
-            // </GestureRecognizer>
+             </GestureRecognizer>
               
             );
           })}
